@@ -1,7 +1,6 @@
 #pragma once
 #include "SDL_window.h"
-class graph // class for working with graphs
-{
+class graph { // class for working with graphs
 private:
 public:
 	graph(const std::string& filename); // creates graph with points in circular layout from file with json data

@@ -1,8 +1,7 @@
 #pragma once
 #include "SDL.h"
 #include <string>
-class SDL_window // window class containing all methods for drawing
-{
+class SDL_window { // window class containing all methods for drawing
 private:
 	SDL_Window* window;
 	SDL_Renderer* renderer;
