@@ -164,7 +164,7 @@ namespace Json {
 
     template<>
     void PrintValue<bool>(const bool& value, std::ostream& output) {
-        output << std::boolalpha << value;
+        output << std::boolalpha << value <<std::noboolalpha;
     }
 
     template<>

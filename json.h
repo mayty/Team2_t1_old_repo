@@ -14,7 +14,7 @@ namespace Json {
     using Array = std::vector<Node>;
     using Dict = std::map<std::string, Node>;
 
-    class Node : std::variant<Array, Dict, bool, int, double, std::string> {
+    class Node : public std::variant<Array, Dict, bool, int, double, std::string> {
     public:
         using variant::variant;
 
@@ -50,13 +50,12 @@ namespace Json {
     };
 
     class Document {
+    private:
+        Node root;
     public:
         explicit Document(Node root) : root(move(root)) {}
 
         const Node& GetRoot() const;
-
-    private:
-        Node root;
     };
 
     Node LoadNode(std::istream& input);
