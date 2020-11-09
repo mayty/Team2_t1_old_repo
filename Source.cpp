@@ -8,8 +8,8 @@
 #define PLACEHOLDER
 
 int main(int argC, char** argV) {
-	SDL_Manager manager{};
-	SDL_Window window{"graph demo", 800, 600};
+	SdlManager manager{};
+	SdlWindow window{"graph demo", 800, 600};
 	Graph demo_graph{ "test.json" };
 	auto last_update_time = std::chrono::high_resolution_clock::now();
 

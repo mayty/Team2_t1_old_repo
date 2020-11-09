@@ -21,7 +21,7 @@ private:
     std::vector<Vertex> adjacencyList;
 public:
     explicit Graph(const std::string& filename); // creates graph with points in circular layout from file with json data
-    void Draw(SDL_Window& window) const; // draws current graph
+    void Draw(SdlWindow& window) const; // draws current graph
     void ApplyForce(); // applyes forces to verteces
     ~Graph();
 };

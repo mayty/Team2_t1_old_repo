@@ -2,12 +2,12 @@
 #include "SDL.h"
 #include <exception>
 #include <stdexcept>
-SDL_Manager::SDL_Manager() {
+SdlManager::SdlManager() {
 	if (SDL_Init(SDL_INIT_EVERYTHING)) {
 		throw std::runtime_error{ SDL_GetError() };
 	}
 }
 
-SDL_Manager::~SDL_Manager() {
+SdlManager::~SdlManager() {
 	SDL_Quit();
 }
