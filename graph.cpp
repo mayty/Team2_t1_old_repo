@@ -3,7 +3,7 @@
 Graph::Graph(const std::string& filename) {
 }
 
-void Graph::Draw(SDL_Window& window) {
+void Graph::Draw(SDL_Window& window) const {
 }
 
 void Graph::ApplyForce() {
