@@ -1,17 +1,18 @@
 #include "SDL_window.h"
+#include <stdexcept>
 
 SDL_window::SDL_window(const std::string& name, size_t width, size_t height)
 {
 	window = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, 0);
 	if (!window)
 	{
-		throw std::exception{ SDL_GetError() };
+		throw std::runtime_error{ SDL_GetError() };
 	}
 	renderer = SDL_CreateRenderer(window, 0, 0);
 	if (!renderer)
 	{
 		SDL_DestroyWindow(window);
-		throw std::exception{ SDL_GetError() };
+		throw std::runtime_error{ SDL_GetError() };
 	}
 }
 
