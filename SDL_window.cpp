@@ -13,6 +13,25 @@ SDL_Window::SDL_Window(const std::string& name, size_t width, size_t height) {
 	}
 }
 
+void SDL_Window::DrawLine(size_t x0, size_t y0, size_t x1, size_t y1)
+{
+	SDL_RenderDrawLine(renderer, x0, y0, x1, y1);
+}
+
+void SDL_Window::DrawRectangle(size_t x0, size_t y0, size_t x1, size_t y1)
+{
+	SDL_Rect rect;
+	rect.x = x0;
+	rect.y = y0;
+	rect.h = y1 - y0;
+	rect.w = x1 - x0;
+}
+
+void SDL_Window::SetDrawColor(unsigned char r, unsigned char g, unsigned char b)
+{
+	SDL_SetRenderDrawColor(renderer, r, g, b, 255);
+}
+
 void SDL_Window::Clear() {
 	SDL_RenderClear(renderer);
 }
