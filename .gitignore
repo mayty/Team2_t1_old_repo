@@ -5,3 +5,6 @@
 /.vs/
 /x64/
 /SDL2.dll
+.idea
+CMakeLists.txt
+cmake-build-debug
