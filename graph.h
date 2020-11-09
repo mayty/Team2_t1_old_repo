@@ -10,13 +10,13 @@ private:
             size_t to;
             double length;
         };
-        struct Coordinates {
+        struct Point {
             double x;
             double y;
         };
         size_t originalIdx;
         std::list<Edge> edges;
-        Coordinates coordinates;
+        Point point;
     };
     std::vector<Vertex> adjacencyList;
 public:
