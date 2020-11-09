@@ -1,13 +1,13 @@
 #include "graph.h"
 
-graph::graph(const std::string& filename) {
+Graph::Graph(const std::string& filename) {
 }
 
-void graph::draw(SDL_window& window) {
+void Graph::Draw(SDL_Window& window) {
 }
 
-void graph::apply_force() {
+void Graph::ApplyForce() {
 }
 
-graph::~graph() {
+Graph::~Graph() {
 }

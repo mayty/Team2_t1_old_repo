@@ -1,7 +1,7 @@
 #include "SDL_window.h"
 #include <stdexcept>
 
-SDL_window::SDL_window(const std::string& name, size_t width, size_t height) {
+SDL_Window::SDL_Window(const std::string& name, size_t width, size_t height) {
 	window = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, 0);
 	if (!window) {
 		throw std::runtime_error{ SDL_GetError() };
@@ -13,15 +13,15 @@ SDL_window::SDL_window(const std::string& name, size_t width, size_t height) {
 	}
 }
 
-void SDL_window::clear() {
+void SDL_Window::Clear() {
 	SDL_RenderClear(renderer);
 }
 
-void SDL_window::update() {
+void SDL_Window::Update() {
 	SDL_RenderPresent(renderer);
 }
 
-bool SDL_window::has_close_request() {
+bool SDL_Window::HasCloseRequest() {
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
 		if (event.type == SDL_QUIT) {
@@ -31,7 +31,7 @@ bool SDL_window::has_close_request() {
 	return false;
 }
 
-SDL_window::~SDL_window() {
+SDL_Window::~SDL_Window() {
 	if (renderer) {
 		SDL_DestroyRenderer(renderer);
 	}
