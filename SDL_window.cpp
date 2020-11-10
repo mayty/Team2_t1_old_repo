@@ -25,6 +25,7 @@ void SdlWindow::DrawRectangle(size_t x0, size_t y0, size_t x1, size_t y1)
 	rect.y = y0;
 	rect.h = y1 - y0;
 	rect.w = x1 - x0;
+	SDL_RenderDrawRect(renderer, &rect);
 }
 
 void SdlWindow::SetDrawColor(unsigned char r, unsigned char g, unsigned char b)
