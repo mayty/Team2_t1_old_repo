@@ -20,6 +20,7 @@ private:
         Point point;
     };
     std::vector<Vertex> adjacencyList;
+    double maxLength;
 public:
     explicit Graph(const std::string& filename); // creates graph with points in circular layout from file with json data
     void Draw(SdlWindow& window) const; // draws current graph
