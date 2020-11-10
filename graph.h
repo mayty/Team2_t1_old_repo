@@ -7,6 +7,7 @@ class Graph { // class for working with graphs
 private:
     struct Vertex {
         struct Edge {
+            Edge(size_t to, double length) : to{ to }, length{ length } {}
             size_t to;
             double length;
         };
