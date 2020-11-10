@@ -5,6 +5,8 @@
 #include <chrono>
 #include <thread>
 
+constexpr int frameTime = 33;
+
 int main(int argC, char** argV) {
 	SdlManager manager{};
 	SdlWindow window{"graph demo", 800, 600};
@@ -17,8 +19,8 @@ int main(int argC, char** argV) {
 		demo_graph.Draw(window);
 
 		auto current_time = std::chrono::high_resolution_clock::now();
-		if (current_time - last_update_time < std::chrono::milliseconds{ 33 }) {
-			std::this_thread::sleep_for(std::chrono::milliseconds{ 33 } - (current_time - last_update_time));
+		if (current_time - last_update_time < std::chrono::milliseconds{ frameTime }) {
+			std::this_thread::sleep_for(std::chrono::milliseconds{ frameTime } - (current_time - last_update_time));
 		}
 		last_update_time = std::chrono::high_resolution_clock::now();
 		window.Update();
