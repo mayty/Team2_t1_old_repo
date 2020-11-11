@@ -11,9 +11,17 @@ int main(int argC, char** argV) {
 	SdlManager manager{};
 	SdlWindow window{"graph demo", 800, 600};
 	Graph demo_graph{ "JSON_test_files/big_graph.json" };
+	bool to_exit = false;
 	auto last_update_time = std::chrono::high_resolution_clock::now();
+	std::thread graphCalcThread{ [&demo_graph, &to_exit]() {
+		double change = 100.0;
+		while (!to_exit && change > 20.0) {
+			change = demo_graph.ApplyForce();
+		} 
+	} 
+	};
 
-	while (!window.HasCloseRequest()) {
+	while (!(to_exit = window.HasCloseRequest())) {
 		window.SetDrawColor(0, 0, 0);
 		window.Clear();
 		demo_graph.Draw(window);
@@ -24,8 +32,9 @@ int main(int argC, char** argV) {
 		}
 		last_update_time = std::chrono::high_resolution_clock::now();
 		window.Update();
-		demo_graph.ApplyForce();
 	}
+
+	graphCalcThread.join();
 
 	return 0;
 }
