@@ -7,6 +7,7 @@ constexpr double PI = 3.141592653589793238463;
 constexpr double xMiddle = 400;
 constexpr double yMiddle = 300;
 constexpr double r = std::min(xMiddle - 30, yMiddle - 30);
+
 Graph::Graph(const std::string& filename) {
 	std::ifstream in(filename);
 	Json::Document document = Json::Load(in);
@@ -31,47 +32,6 @@ Graph::Graph(const std::string& filename) {
 		AddEdge(from, edge);
 		maxLength = std::max(maxLength, edge.length);
 	}
-	
-	
-	/*// creating dummy graph for testing
-	// --------------------------------
-	adjacencyList.resize(8);
-	adjacencyList[0].edges.emplace_front(3, 2.0);
-	adjacencyList[0].edges.emplace_front(4, 7.0);
-	adjacencyList[0].edges.emplace_front(7, 5.0);
-
-	adjacencyList[1].edges.emplace_front(6, 2.0);
-
-	adjacencyList[2].edges.emplace_front(5, 3.0);
-	adjacencyList[2].edges.emplace_front(7, 3.0);
-
-	adjacencyList[3].edges.emplace_front(0, 2.0);
-	adjacencyList[3].edges.emplace_front(7, 2.0);
-
-	adjacencyList[4].edges.emplace_front(0, 7.0);
-	adjacencyList[4].edges.emplace_front(6, 2.0);
-
-	adjacencyList[5].edges.emplace_front(2, 3.0);
-	adjacencyList[5].edges.emplace_front(7, 2.0);
-
-	adjacencyList[6].edges.emplace_front(1, 2.0);
-	adjacencyList[6].edges.emplace_front(4, 2.0);
-
-	adjacencyList[7].edges.emplace_front(0, 5.0);
-	adjacencyList[7].edges.emplace_front(2, 2.0);
-	adjacencyList[7].edges.emplace_front(3, 2.0);
-	adjacencyList[7].edges.emplace_front(5, 2.0);
-
-	maxLength = 7.0;
-	// --------------------------------
-
-	double step = PI * 2 / adjacencyList.size();
-	double r = 250;
-	for (int i = 0; i < adjacencyList.size(); ++i)
-	{
-		adjacencyList[i].point.x = xMiddle + r * std::cos(i * step);
-		adjacencyList[i].point.y = yMiddle + r * std::sin(i * step);
-	}*/
 }
 
 void Graph::AddEdge(size_t from, Vertex::Edge edge) {
