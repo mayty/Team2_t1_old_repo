@@ -31,10 +31,6 @@
     <ClInclude Include="SDL_manager.h" />
     <ClInclude Include="SDL_window.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="big_graph.json" />
-    <None Include="small_graph.json" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
