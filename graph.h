@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <list>
+#include <mutex>
 #include "SDL_window.h"
 
 class Graph { // class for working with graphs
@@ -24,11 +25,13 @@ private:
     };
     std::vector<Vertex> adjacencyList;
     double maxLength = 0;
-    void AddEdge(size_t from, Vertex::Edge edge);
+    std::mutex write_lock;
 public:
     explicit Graph(const std::string& filename); // creates graph with points in circular layout from file with json data
-    void Draw(SdlWindow& window) const; // draws current graph
-    void ApplyForce(); // applyes forces to verteces
+    void Draw(SdlWindow& window); // draws current graph
+    double ApplyForce(); // applyes forces to verteces
     ~Graph();
+private:
+    void AddEdge(size_t from, Vertex::Edge edge);
 };
 

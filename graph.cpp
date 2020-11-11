@@ -43,8 +43,8 @@ void Graph::AddEdge(size_t from, Vertex::Edge edge) {
 	}
 }
 
-void Graph::Draw(SdlWindow& window) const {
-
+void Graph::Draw(SdlWindow& window) {
+	write_lock.lock();
 	window.SetDrawColor(255, 255, 255);
 	for (int i = 0; i < adjacencyList.size(); ++i) {
 		for (const auto& j : adjacencyList[i].edges) {
@@ -57,17 +57,19 @@ void Graph::Draw(SdlWindow& window) const {
 	for (const auto& i : adjacencyList) {
 		window.DrawRectangle(std::round(i.point.x - 5), std::round(i.point.y - 5), std::round(i.point.x + 5), std::round(i.point.y + 5));
 	}
+	write_lock.unlock();
 }
 
-void Graph::ApplyForce() {
-	std::vector<std::pair<double, double>> forces;
-	forces.resize(adjacencyList.size());
+double Graph::ApplyForce() {
+	static std::vector<std::pair<double, double>> forces;
+	if (forces.empty())
+		forces.resize(adjacencyList.size());
 
 	for (int i = 0; i < adjacencyList.size(); ++i) { // Coulomb's law
 		for (int j = adjacencyList.size() - 1; j > i; --j) {
 			double x = adjacencyList[i].point.x - adjacencyList[j].point.x; // vector j -> i 
 			double y = adjacencyList[i].point.y - adjacencyList[j].point.y;
-			
+
 			double distance = std::sqrt(x * x + y * y);
 			double force = 10000.0 / (distance * distance);
 
@@ -86,19 +88,12 @@ void Graph::ApplyForce() {
 		double y = adjacencyList[i].point.y - yMiddle;
 
 		double distance = std::sqrt(x * x + y * y);
-		double force;
-		if (distance > std::min(yMiddle, xMiddle)) {
-			force = 5.0;
-		}
-		else {
-			continue;
-		}
 
 		double xForceNormilized = x / distance;
 		double yForceNormilized = y / distance;
 
-		forces[i].first -= xForceNormilized * force;
-		forces[i].second -= yForceNormilized * force;
+		forces[i].first -= xForceNormilized;
+		forces[i].second -= yForceNormilized;
 	}
 
 	for (int i = 0; i < adjacencyList.size(); ++i) { // Hooke's law
@@ -121,11 +116,17 @@ void Graph::ApplyForce() {
 			forces[j.to].second += yforcenormilized * force;
 		}
 	}
-
+	double total = 0;
+	write_lock.lock();
 	for (int i = 0; i < adjacencyList.size(); ++i) {
 		adjacencyList[i].point.x += forces[i].first * 0.5;
 		adjacencyList[i].point.y += forces[i].second * 0.5;
+		total += std::abs(forces[i].first * 0.5) + std::abs(forces[i].second * 0.5);
+		forces[i].first *= 0.94;
+		forces[i].second *= 0.94;
 	}
+	write_lock.unlock();
+	return total;
 }
 
 Graph::~Graph() {
