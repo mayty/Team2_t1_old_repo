@@ -45,4 +45,8 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="big_graph.json" />
+    <None Include="small_graph.json" />
+  </ItemGroup>
 </Project>

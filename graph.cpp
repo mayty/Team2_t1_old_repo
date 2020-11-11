@@ -1,12 +1,40 @@
 #include "graph.h"
 #include <cmath>
+#include <map>
+#include <set>
+#include <algorithm>
 
 constexpr double PI = 3.141592653589793238463;
 constexpr double xMiddle = 400;
 constexpr double yMiddle = 300;
-
+constexpr double r = std::min(xMiddle - 30, yMiddle - 30);
 Graph::Graph(const std::string& filename) {
-	// creating dummy graph for testing
+	std::ifstream in(filename);
+	Json::Document document = Json::Load(in);
+	auto nodeMap = document.GetRoot().AsMap();
+	adjacencyList.reserve(nodeMap["points"].AsArray().size());
+	std::map<size_t, size_t> idxConverter;
+	double phi = 0;
+	double phi_step = 2 * PI / nodeMap["points"].AsArray().size();
+	for (const auto& vertexNode : nodeMap["points"].AsArray()) {
+		auto vertexMap = vertexNode.AsMap();
+		idxConverter[vertexMap["idx"].AsInt()] = adjacencyList.size();
+		adjacencyList.push_back( {static_cast<size_t>(vertexMap["idx"].AsInt()), static_cast<size_t>(vertexMap["post_idx"].AsInt()), std::list<Vertex::Edge>(), 
+			{xMiddle + r * std::cos(phi), yMiddle + r * std::sin(phi)} });
+		phi += phi_step;
+	}
+	for (const auto& edgeNode : nodeMap["lines"].AsArray()) {
+		auto edgeMap = edgeNode.AsMap();
+		size_t from = idxConverter[edgeMap["points"].AsArray()[0].AsInt()];
+		Vertex::Edge edge(edgeMap["idx"].AsInt(), idxConverter[edgeMap["points"].AsArray()[1].AsInt()], edgeMap["length"].AsDouble());
+		AddEdge(from, edge);
+		std::swap(from, edge.to);
+		AddEdge(from, edge);
+		maxLength = std::max(maxLength, edge.length);
+	}
+	
+	
+	/*// creating dummy graph for testing
 	// --------------------------------
 	adjacencyList.resize(8);
 	adjacencyList[0].edges.emplace_front(3, 2.0);
@@ -44,6 +72,15 @@ Graph::Graph(const std::string& filename) {
 	{
 		adjacencyList[i].point.x = xMiddle + r * std::cos(i * step);
 		adjacencyList[i].point.y = yMiddle + r * std::sin(i * step);
+	}*/
+}
+
+void Graph::AddEdge(size_t from, Vertex::Edge edge) {
+	auto pos = std::find_if(begin(adjacencyList[from].edges), end(adjacencyList[from].edges), [edge](const Vertex::Edge& cur) {return cur.to < edge.to; });
+	if (pos == end(adjacencyList[from].edges)) {
+		adjacencyList[from].edges.push_back(edge);
+	} else {
+		adjacencyList[from].edges.insert(pos, edge);
 	}
 }
 

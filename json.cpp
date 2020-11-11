@@ -8,16 +8,8 @@ namespace Json {
         return std::holds_alternative<Array>(*this);
     }
 
-    const auto& Node::AsArray() const {
-        return std::get<Array>(*this);
-    }
-
     bool Node::IsMap() const {
         return std::holds_alternative<Dict>(*this);
-    }
-
-    const auto& Node::AsMap() const {
-        return std::get<Dict>(*this);
     }
 
     bool Node::IsBool() const {
@@ -52,10 +44,6 @@ namespace Json {
         return std::holds_alternative<std::string>(*this);
     }
 
-    const auto& Node::AsString() const {
-        return std::get<std::string>(*this);
-    }
-
     const Node& Document::GetRoot() const {
         return root;
     }
@@ -81,6 +69,13 @@ namespace Json {
         return Node(s == "true");
     }
 
+    Node LoadNull(istream& input) {
+        string s;
+        while (isalpha(input.peek())) {
+            s.push_back(input.get());
+        }
+        return Node(0);
+    }
     Node LoadNumber(istream& input) {
         bool isNegative = false;
         if (input.peek() == '-') {
@@ -140,6 +135,9 @@ namespace Json {
         } else if (c == 't' || c == 'f') {
             input.putback(c);
             return LoadBool(input);
+        } else if (c == 'n') {
+            input.putback(c);
+            return LoadNull(input);
         } else {
             input.putback(c);
             return LoadNumber(input);
@@ -195,6 +193,11 @@ namespace Json {
             PrintNode(node, output);
         }
         output << '}';
+    }
+
+    template<>
+    void PrintValue<std::nullptr_t>(const std::nullptr_t&, std::ostream& output) {
+        output << "null";
     }
 
     void PrintNode(const Json::Node& node, ostream& output) {
