@@ -10,7 +10,7 @@ constexpr int frameTime = 33;
 int main(int argC, char** argV) {
 	SdlManager manager{};
 	SdlWindow window{"graph demo", 800, 600};
-	Graph demo_graph{ "big_graph.json" };
+	Graph demo_graph{ "JSON_test_files/big_graph.json" };
 	auto last_update_time = std::chrono::high_resolution_clock::now();
 
 	while (!window.HasCloseRequest()) {
