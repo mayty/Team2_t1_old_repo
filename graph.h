@@ -1,10 +1,8 @@
 #pragma once
 
 #include <vector>
-#include <fstream>
 #include <list>
 #include "SDL_window.h"
-#include "json.h"
 
 class Graph { // class for working with graphs
 private:

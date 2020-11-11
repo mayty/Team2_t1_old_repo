@@ -1,8 +1,7 @@
 #include "graph.h"
+#include "json.h"
 #include <cmath>
-#include <map>
-#include <set>
-#include <algorithm>
+#include <fstream>
 
 constexpr double PI = 3.141592653589793238463;
 constexpr double xMiddle = 400;
