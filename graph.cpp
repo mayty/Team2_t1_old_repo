@@ -19,8 +19,11 @@ Graph::Graph(const std::string& filename) {
 	for (const auto& vertexNode : nodeMap["points"].AsArray()) {
 		auto vertexMap = vertexNode.AsMap();
 		idxConverter[vertexMap["idx"].AsInt()] = adjacencyList.size();
-		adjacencyList.push_back( {static_cast<size_t>(vertexMap["idx"].AsInt()), static_cast<size_t>(vertexMap["post_idx"].AsInt()), std::list<Vertex::Edge>(), 
+		adjacencyList.push_back( {static_cast<size_t>(vertexMap["idx"].AsInt()), std::nullopt, std::list<Vertex::Edge>(),
 			{xMiddle + r * std::cos(phi), yMiddle + r * std::sin(phi)} });
+		if (!vertexMap["post_idx"].IsNull()) {
+			adjacencyList.back().postIdx = static_cast<size_t>(vertexMap["post_idx"].AsInt());
+		}
 		phi += phi_step;
 	}
 	for (const auto& edgeNode : nodeMap["lines"].AsArray()) {

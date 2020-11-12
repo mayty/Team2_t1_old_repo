@@ -14,7 +14,7 @@ namespace Json {
     using Array = std::vector<Node>;
     using Dict = std::map<std::string, Node>;
 
-    class Node : public std::variant<std::nullptr_t, Array, Dict, bool, int, double, std::string> {
+    class Node : public std::variant<std::monostate, Array, Dict, bool, int, double, std::string> {
     public:
         using variant::variant;
 
@@ -49,6 +49,8 @@ namespace Json {
         double AsDouble() const;
 
         bool IsString() const;
+
+        bool IsNull() const;
 
         const auto& AsString() const {
             return std::get<std::string>(*this);
@@ -88,7 +90,7 @@ namespace Json {
     void PrintValue<Dict>(const Dict& dict, std::ostream& output);
 
     template<>
-    void PrintValue<std::nullptr_t>(const std::nullptr_t&, std::ostream& output);
+    void PrintValue<std::monostate>(const std::monostate&, std::ostream& output);
 
     void Print(const Document& document, std::ostream& output);
 

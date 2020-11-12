@@ -44,6 +44,10 @@ namespace Json {
         return std::holds_alternative<std::string>(*this);
     }
 
+    bool Node::IsNull() const {
+        return std::holds_alternative<std::monostate> (*this);
+    }
+
     const Node& Document::GetRoot() const {
         return root;
     }
@@ -196,7 +200,7 @@ namespace Json {
     }
 
     template<>
-    void PrintValue<std::nullptr_t>(const std::nullptr_t&, std::ostream& output) {
+    void PrintValue<std::monostate>(const std::monostate&, std::ostream& output) {
         output << "null";
     }
 

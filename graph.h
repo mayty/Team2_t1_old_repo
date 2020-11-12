@@ -3,6 +3,7 @@
 #include <vector>
 #include <list>
 #include <mutex>
+#include <optional>
 #include "SDL_window.h"
 
 class Graph { // class for working with graphs
@@ -19,7 +20,7 @@ private:
             double y;
         };
         size_t originalIdx;
-        size_t postIdx;
+        std::optional<size_t> postIdx;
         std::list<Edge> edges;
         Point point;
     };
