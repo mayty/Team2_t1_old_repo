@@ -47,88 +47,105 @@ void Graph::AddEdge(size_t from, Vertex::Edge edge) {
 }
 
 void Graph::Draw(SdlWindow& window) {
-	write_lock.lock();
-	window.SetDrawColor(255, 255, 255);
+	writeLock.lock();
 	for (int i = 0; i < adjacencyList.size(); ++i) {
 		for (const auto& j : adjacencyList[i].edges) {
 			if (j.to < i) {
 				break;
 			}
+			unsigned char color = 255 * (maxLength - j.length + 1) / maxLength;
+			window.SetDrawColor(color, color, color);
 			window.DrawLine(std::round(adjacencyList[i].point.x), std::round(adjacencyList[i].point.y), std::round(adjacencyList[j.to].point.x), std::round(adjacencyList[j.to].point.y));
 		}
 	}
+	window.SetDrawColor(255, 255, 255);
 	for (const auto& i : adjacencyList) {
 		window.DrawRectangle(std::round(i.point.x - 5), std::round(i.point.y - 5), std::round(i.point.x + 5), std::round(i.point.y + 5));
 	}
-	write_lock.unlock();
+	writeLock.unlock();
 }
 
 double Graph::ApplyForce() {
+	constexpr double coulombsK = 10000.0;
+	constexpr double moveK = 0.1;
+	static double maxAllowedSquare = 500 * 500 / moveK;
 	static std::vector<std::pair<double, double>> forces;
-	if (forces.empty())
+	if (forces.empty()) {
 		forces.resize(adjacencyList.size());
+	}
+
+	maxAllowedSquare = std::pow(std::sqrt(maxAllowedSquare) * 0.999, 2);
 
 	for (int i = 0; i < adjacencyList.size(); ++i) { // Coulomb's law
 		for (int j = adjacencyList.size() - 1; j > i; --j) {
-			double x = adjacencyList[i].point.x - adjacencyList[j].point.x; // vector j -> i 
+			double x = adjacencyList[i].point.x - adjacencyList[j].point.x;
 			double y = adjacencyList[i].point.y - adjacencyList[j].point.y;
 
-			double distance = std::sqrt(x * x + y * y);
-			double force = 10000.0 / (distance * distance);
+			double square = x * x + y * y;
+			double k = coulombsK / (square * std::sqrt(square));
+			double xForce = x * k;
+			double yForce = y * k;
 
-			double xForceNormilized = x / distance;
-			double yForceNormilized = y / distance;
-
-			forces[i].first += xForceNormilized * force;
-			forces[i].second += yForceNormilized * force;
-			forces[j].first -= xForceNormilized * force;
-			forces[j].second -= yForceNormilized * force;
+			forces[i].first += xForce;
+			forces[i].second += yForce;
+			forces[j].first -= xForce;
+			forces[j].second -= yForce;
 		}
 	}
 
 	for (int i = 0; i < adjacencyList.size(); ++i) { // push to the middle
-		double x = adjacencyList[i].point.x - xMiddle; // vector j -> i 
+		double x = adjacencyList[i].point.x - xMiddle;
 		double y = adjacencyList[i].point.y - yMiddle;
 
-		double distance = std::sqrt(x * x + y * y);
-
-		double xForceNormilized = x / distance;
-		double yForceNormilized = y / distance;
-
-		forces[i].first -= xForceNormilized;
-		forces[i].second -= yForceNormilized;
+		double k = std::max(1.0, adjacencyList.size() / 500.0) / std::sqrt(x * x + y * y);
+		forces[i].first -= x * k;
+		forces[i].second -= y * k;
 	}
 
+	double maxSquare = 0;
 	for (int i = 0; i < adjacencyList.size(); ++i) { // Hooke's law
 		for (const auto& j : adjacencyList[i].edges) {
 			if (j.to < i) {
 				break;
 			}
-			double x = adjacencyList[i].point.x - adjacencyList[j.to].point.x; // vector j -> i
+
+			double x = adjacencyList[i].point.x - adjacencyList[j.to].point.x;
 			double y = adjacencyList[i].point.y - adjacencyList[j.to].point.y;
 
-			double distance = std::sqrt(x * x + y * y);
-			double force = (maxLength + 1 - j.length) * distance / 100.0;
+			double k = (maxLength + 1 - j.length) / 100.0;
+			double xForce = x * k;
+			double yForce = y * k;
 
-			double xforcenormilized = x / distance;
-			double yforcenormilized = y / distance;
+			forces[i].first -= xForce;
+			forces[i].second -= yForce;
+			forces[j.to].first += xForce;
+			forces[j.to].second += yForce;
+		}
 
-			forces[i].first -= xforcenormilized * force;
-			forces[i].second -= yforcenormilized * force;
-			forces[j.to].first += xforcenormilized * force;
-			forces[j.to].second += yforcenormilized * force;
+		double currentForceSquare = forces[i].first * forces[i].first + forces[i].second * forces[i].second;
+		if (currentForceSquare > maxSquare) {
+			maxSquare = currentForceSquare;
 		}
 	}
-	double total = 0;
-	write_lock.lock();
-	for (int i = 0; i < adjacencyList.size(); ++i) {
-		adjacencyList[i].point.x += forces[i].first * 0.5;
-		adjacencyList[i].point.y += forces[i].second * 0.5;
-		total += std::abs(forces[i].first * 0.5) + std::abs(forces[i].second * 0.5);
-		forces[i].first *= 0.94;
-		forces[i].second *= 0.94;
+	
+	if (maxSquare > maxAllowedSquare) {
+		double k = std::sqrt(maxAllowedSquare) / std::sqrt(maxSquare);
+		for (auto& i : forces) {
+			i.first *= k;
+			i.second *= k;
+		}
 	}
-	write_lock.unlock();
+
+	double total = 0;
+	writeLock.lock();
+	for (int i = 0; i < adjacencyList.size(); ++i) {
+		double distanceX = forces[i].first * moveK;
+		double distanceY = forces[i].second * moveK;
+		adjacencyList[i].point.x += distanceX;
+		adjacencyList[i].point.y += distanceY;
+		total += std::abs(distanceX) + std::abs(distanceY);
+	}
+	writeLock.unlock();
 	return total;
 }
 

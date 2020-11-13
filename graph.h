@@ -4,6 +4,7 @@
 #include <list>
 #include <mutex>
 #include <optional>
+#include <atomic>
 #include "SDL_window.h"
 
 class Graph { // class for working with graphs
@@ -26,7 +27,7 @@ private:
     };
     std::vector<Vertex> adjacencyList;
     double maxLength = 0;
-    std::mutex write_lock;
+    std::mutex writeLock;
 public:
     explicit Graph(const std::string& filename); // creates graph with points in circular layout from file with json data
     void Draw(SdlWindow& window); // draws current graph
