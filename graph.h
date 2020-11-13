@@ -31,7 +31,7 @@ private:
 public:
     explicit Graph(const std::string& filename); // creates graph with points in circular layout from file with json data
     void Draw(SdlWindow& window); // draws current graph
-    double ApplyForce(); // applyes forces to verteces
+    double ApplyForce(); // applies forces to vertices
     ~Graph();
 private:
     void AddEdge(size_t from, Vertex::Edge edge);
