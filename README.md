@@ -11,8 +11,5 @@ C++
 
 ## Notes:
 
-SDL2.dll from 'SDL2/runtime_libs/' must be in the same folder as executable file for executable to run</br>
-
-Controls:
-- Mouse Wheel - zoom
-- Arrow keys - moving
+SDL2.dll from 'SDL2/runtime_libs/' must be in the same folder as executable file for executable to run.</br>
+filename is passed as command line argument. If empty "JSON_test_files/big_graph.json" is assumed.
