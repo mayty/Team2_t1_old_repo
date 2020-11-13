@@ -12,12 +12,10 @@ int main(int argC, char** argV) {
 	SdlManager manager{};
 	SdlWindow window{"graph demo", 800, 600};
 	std::string filename;
-	if (argC < 2)
-	{
+	if (argC < 2) {
 		filename = "JSON_test_files/big_graph.json";
 	}
-	else
-	{
+	else {
 		filename = argV[1];
 	}
 	Graph demoGraph{ filename };
